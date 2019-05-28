@@ -6,7 +6,7 @@ const key = require('./privateSettings.json');
 
 // TODO(you): Change the value of this string to the spreadsheet id for your
 // GSA spreadsheet. See HW5 spec for more information.
-const SPREADSHEET_ID = '__YOUR__SPREADSHEET__ID__HERE__';
+const SPREADSHEET_ID = '1RfW0DpH0MHPSJd8SQYfnBUOaoXIpyZyjF_57d0RlTEY';
 
 const app = express();
 const jsonParser = bodyParser.json();
@@ -20,8 +20,18 @@ async function onGet(req, res) {
   console.log(rows);
 
   // TODO(you): Finish onGet.
-
-  res.json( { status: 'unimplemented'} );
+  const data = [];
+  const props = rows[0].map(prop => {
+    return prop;
+  });
+  for (let i = 1; i < rows.length; i += 1) {
+    const obj = {};
+    for (let j = 0; j < props.length; j += 1) {
+      obj[`${props[j]}`] = rows[i][j];
+    }
+    data.push(obj);
+  }
+  res.json(data);
 }
 app.get('/api', onGet);
 
@@ -60,5 +70,5 @@ app.delete('/api/:column/:value',  onDelete);
 const port = process.env.PORT || 3000;
 
 app.listen(port, function () {
-  console.log(`Server listening on port ${port}!`);
+  console.log(`CS193X: Server listening on port ${port}!`);
 });
