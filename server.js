@@ -24,6 +24,7 @@ async function onGet(req, res) {
   const props = rows[0].map(prop => {
     return prop;
   });
+
   for (let i = 1; i < rows.length; i += 1) {
     const obj = {};
     for (let j = 0; j < props.length; j += 1) {
@@ -31,6 +32,7 @@ async function onGet(req, res) {
     }
     data.push(obj);
   }
+
   res.json(data);
 }
 app.get('/api', onGet);
@@ -60,8 +62,23 @@ async function onDelete(req, res) {
   const value  = req.params.value;
 
   // TODO(you): Implement onDelete.
+  const result = await sheet.getRows();
+  const rows = result.rows;
+  const propIndex = rows[0].findIndex(prop => {
+    return prop === column;
+  });
+  let deleteIndex = -1;
 
-  res.json( { status: 'unimplemented'} );
+  for (let i = 1; i < rows.length; i += 1) {
+    if (rows[i][propIndex] === value) {
+      deleteIndex = i;
+      break;
+    }
+  }
+
+  sheet.deleteRow(deleteIndex);
+
+  res.json({ "response": "success" });
 }
 app.delete('/api/:column/:value',  onDelete);
 
