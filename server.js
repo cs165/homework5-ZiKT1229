@@ -41,8 +41,18 @@ async function onPost(req, res) {
   const messageBody = req.body;
 
   // TODO(you): Implement onPost.
+  const result = await sheet.getRows();
+  const rows = result.rows;
+  const props = rows[0].map(prop => {
+    return prop;
+  });
+  const value = [];
 
-  res.json( { status: 'unimplemented'} );
+  for (let i = 0; i < props.length; i += 1) {
+    value.push(messageBody[`${props[i]}`]);
+  }
+  sheet.appendRow(value);
+  res.json({ "response": "success" });
 }
 app.post('/api', jsonParser, onPost);
 
