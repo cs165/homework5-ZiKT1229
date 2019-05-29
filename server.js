@@ -50,7 +50,7 @@ async function onPost(req, res) {
   for (let i = 0; i < props.length; i += 1) {
     value.push(messageBody[`${props[i]}`]);
   }
-  sheet.appendRow(value);
+  await sheet.appendRow(value);
   res.json({ "response": "success" });
 }
 app.post('/api', jsonParser, onPost);
@@ -83,7 +83,7 @@ async function onPatch(req, res) {
       newRow.push(rows[patchIndex][i]);
     }
   }
-  sheet.setRow(patchIndex, newRow);
+  await sheet.setRow(patchIndex, newRow);
   res.json({ "response": "success" });
 }
 app.patch('/api/:column/:value', jsonParser, onPatch);
@@ -107,7 +107,7 @@ async function onDelete(req, res) {
     }
   }
 
-  sheet.deleteRow(deleteIndex);
+  await sheet.deleteRow(deleteIndex);
   res.json({ "response": "success" });
 }
 app.delete('/api/:column/:value',  onDelete);
