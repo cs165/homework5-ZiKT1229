@@ -32,7 +32,6 @@ async function onGet(req, res) {
     }
     data.push(obj);
   }
-
   res.json(data);
 }
 app.get('/api', onGet);
@@ -62,8 +61,30 @@ async function onPatch(req, res) {
   const messageBody = req.body;
 
   // TODO(you): Implement onPatch.
+  const result = await sheet.getRows();
+  const rows = result.rows;
+  const propIndex = rows[0].findIndex(prop => {
+    return prop === column;
+  });
+  let patchIndex = -1;
+  const newRow = [];
 
-  res.json( { status: 'unimplemented'} );
+  for (let i = 1; i < rows.length; i += 1) {
+    if (rows[i][propIndex] === value) {
+      patchIndex = i;
+      break;
+    }
+  }
+
+  for (let i = 0; i < rows[patchIndex].length; i += 1) {
+    if (rows[0][i] in messageBody) {
+      newRow.push(messageBody[rows[0][i]]);
+    } else {
+      newRow.push(rows[patchIndex][i]);
+    }
+  }
+  sheet.setRow(patchIndex, newRow);
+  res.json({ "response": "success" });
 }
 app.patch('/api/:column/:value', jsonParser, onPatch);
 
@@ -87,7 +108,6 @@ async function onDelete(req, res) {
   }
 
   sheet.deleteRow(deleteIndex);
-
   res.json({ "response": "success" });
 }
 app.delete('/api/:column/:value',  onDelete);
